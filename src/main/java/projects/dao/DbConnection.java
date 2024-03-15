@@ -1,10 +1,10 @@
-package project.dao;
+package projects.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import project.exception.DbException;
+import projects.exception.DbException;
 
 public class DbConnection {
 
@@ -22,8 +22,7 @@ public class DbConnection {
 						HOST, PORT, SCHEMA, USER, PASSWORD);
 		
 		
-		
-		System.out.println("Connecting with url= "  + url);
+
 		
 		try {
 			Connection conn = DriverManager.getConnection(url);
