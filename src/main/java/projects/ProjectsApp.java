@@ -12,10 +12,15 @@ import projects.service.ProjectService;
 public class ProjectsApp {
     private Scanner scanner = new Scanner(System.in);
     private ProjectService projectService = new ProjectService();
+    private Project curProject;
     private List<String> operations = List.of(
-            "1) Add a Project"
+            "1) Add a Project",
+    	    "2) List All Project",
+    	    "3) Select a Project"
+    		
     );
 
+    
     void processUserSelections() {
         boolean done = false;
 
@@ -29,6 +34,13 @@ public class ProjectsApp {
                     case 1:
                         addProject();
                         break;
+                    case 2:
+                        listProjects();
+                        break;
+                    case 3:
+                        selectProject();
+                        break;
+                    
                     default:
                         System.out.println("\n" + selection + " is not valid. Try again.");
                         break;
@@ -38,6 +50,31 @@ public class ProjectsApp {
             }
         }
     }
+    
+    private void listProjects() {
+
+  		// TODO Auto-generated method stub
+
+      			List<Project> projects = projectService.fetchAllProjects();
+
+      			System.out.println("\nProjects:");
+
+      			projects.forEach(project -> System.out.println("  "  + project.getProjectId() + ": " + project.getProjectName()));   
+
+      	
+
+  	}
+
+  	private void selectProject() {
+
+  		// TODO Auto-generated method stub
+
+  		listProjects(); 
+  		Integer projectId = getIntInput("Enter the project you would like to pick!");
+  		curProject = null;
+  		curProject = projectService.fetchProjectById(projectId);
+
+  	}
 
     private void addProject() {
         String projectName = getStringInput("Enter the Project name");
@@ -106,6 +143,12 @@ public class ProjectsApp {
     private void printOperations() {
         System.out.println("\nThese are the selections. Press a key to pick one!");
         operations.forEach(line -> System.out.println(" " + line));
+        
+        if (Objects.isNull(curProject)) {
+            System.out.println("\nPick another project");
+        } else { 
+            System.out.println("\nThe project you are working with is: " + curProject);
+        }
     }
 }
 
