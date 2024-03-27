@@ -1,6 +1,7 @@
 package projects;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
@@ -16,7 +17,9 @@ public class ProjectsApp {
     private List<String> operations = List.of(
             "1) Add a Project",
     	    "2) List All Project",
-    	    "3) Select a Project"
+    	    "3) Select a Project",
+    	    "4) Update a Project",
+    	    "5) Delete a Project"
     		
     );
 
@@ -29,7 +32,7 @@ public class ProjectsApp {
                 int selection = getUserSelection();
                 switch (selection) {
                     case -1:
-                        done = exitMenu();
+                        done = exitMenu(); 
                         break;
                     case 1:
                         addProject();
@@ -39,6 +42,12 @@ public class ProjectsApp {
                         break;
                     case 3:
                         selectProject();
+                        break;
+                    case 4:
+                        updateProjectDetails();
+                        break;
+                    case 5:
+                        deleteProject();
                         break;
                     
                     default:
@@ -51,7 +60,51 @@ public class ProjectsApp {
         }
     }
     
-    private void listProjects() {
+	private void deleteProject() {
+		// TODO Auto-generated method stub
+	    listProjects(); 
+	    Integer projectId = getIntInput("Enter the project ID you want to delete");
+	    try {
+	        projectService.deleteProject(projectId);
+	        System.out.print("\nProject ID: " + projectId + " was deleted! " );
+	        if (Objects.nonNull(curProject) && curProject.getProjectId().equals(projectId)) {
+	            curProject = null;
+	        }
+	    } catch (SQLException e) {
+	        System.out.println("Error deleting project: " + e.getMessage());
+	    }
+	
+	}
+	
+    
+    private void updateProjectDetails() {
+		// TODO Auto-generated method stub
+		if(Objects.isNull(curProject)) {
+			System.out.println("\nPick a project to update");
+			return;
+		}
+		String projectName = getStringInput("Enter Project name [" + curProject.getProjectName() + "]");
+        BigDecimal estimatedHours = getDecimalInput("Enter estimated time worked [" + curProject.getEstimatedHours() + "]");
+        BigDecimal actualHours = getDecimalInput("Enter actual time worked [" + curProject.getActualHours() + "]");
+        Integer difficulty = getIntInput("Enter the difficulty [ " + curProject.getDifficulty() + "]");
+        String notes = getStringInput("Enter the project notes [" + curProject.getNotes() + "]" );
+        
+        Project project = new Project();
+        project.setProjectId(curProject.getProjectId());
+        project.setProjectName(Objects.isNull(projectName) ? curProject.getProjectName() : projectName);
+        project.setDifficulty(Objects.isNull(difficulty) ? curProject.getDifficulty() : difficulty);
+        project.setNotes(Objects.isNull(notes) ? curProject.getNotes() : notes);
+        project.setEstimatedHours(Objects.isNull(estimatedHours) ? curProject.getEstimatedHours() : estimatedHours);
+        project.setActualHours(Objects.isNull(actualHours) ? curProject.getActualHours() : actualHours);; 
+   
+        
+        projectService.modifyProjectDetails(project);
+        
+        curProject = projectService.fetchProjectById(curProject.getProjectId());
+    }
+
+
+	private void listProjects() {
 
   		// TODO Auto-generated method stub
 
